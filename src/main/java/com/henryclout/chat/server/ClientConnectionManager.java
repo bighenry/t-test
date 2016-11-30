@@ -12,8 +12,6 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.henryclout.chat.MessageBroadcaster;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

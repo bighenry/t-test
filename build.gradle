@@ -49,6 +49,7 @@ dependencies {
     // Lombok
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     
-	// JUnit    
+	// Test    
     testCompile "junit:junit:$junitVersion"
+    testCompile "org.springframework.boot:spring-boot-starter-test"
 }

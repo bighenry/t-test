@@ -1,4 +1,4 @@
-package com.henryclout.chat;
+package com.henryclout.chat.server;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
