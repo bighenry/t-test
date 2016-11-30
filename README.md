@@ -12,8 +12,16 @@ Implementation of an IRC-like chat server.
 * Implement tests
 * Consider optimisations [IO selectors -- although really beyond usage needs]
 
+## Description
+
+* A Spring Boot application acting as a very simple chat server.
+* Up to 100 clients can connect, each client messages are relayed to all other clients
+* Server is hard coded to listen on port 8081
 
 ## Limitations
 
-## Enhancements
+* Simple ‘echo’ behaviour to any client connecting only.  No command parsing
+* No configuration of port, connection limit
+* No room support
+* Given the use of socket / client -- limited scope for scaling.  This is in line with the usage requirements however
 
