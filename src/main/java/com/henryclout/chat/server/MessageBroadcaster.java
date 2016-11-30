@@ -3,14 +3,14 @@ package com.henryclout.chat.server;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Component
 public class MessageBroadcaster {
+
+	private final static Logger LOG = Logger.getLogger(MessageBroadcaster.class.getName());
 
 	private Set<PrintWriter> broadcastWriters = new HashSet<>();
 	
@@ -23,7 +23,7 @@ public class MessageBroadcaster {
 	}
 	
 	public void broadcastMessage(String message, PrintWriter messageSourceClientPrintWriter) {
-		LOG.debug("Broadcasting message: " + message);
+		LOG.fine("Broadcasting message: " + message);
 		broadcastWriters.parallelStream().forEach((broadcastWriter) -> {
 			if (broadcastWriter != messageSourceClientPrintWriter) {
 				// Only broadcast to 'other' clients. 

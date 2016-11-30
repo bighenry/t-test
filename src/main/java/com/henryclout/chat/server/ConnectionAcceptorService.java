@@ -3,17 +3,18 @@ package com.henryclout.chat.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 public class ConnectionAcceptorService {
+
+	private final static Logger LOG = Logger.getLogger(ConnectionAcceptorService.class.getName());
 
 	// FIXME: make configurable
 	private int acceptPort = 8081;
@@ -29,17 +30,17 @@ public class ConnectionAcceptorService {
 
 				while (true) {
 					try {
-						LOG.debug("Waiting for client connection.");
+						LOG.fine("Waiting for client connection.");
 						Socket clientSocket = serverSocket.accept();
-						LOG.debug("Client opened socket connection from: " + clientSocket.getRemoteSocketAddress());
+						LOG.fine("Client opened socket connection from: " + clientSocket.getRemoteSocketAddress());
 
 						clientConnectionManager.connectClient(clientSocket);
 					} catch (Throwable t) {
-						LOG.warn("Failed to establish socket connection.", t);
+						LOG.log(Level.WARNING, "Failed to establish socket connection.", t);
 					}
 				}
 			} catch (Throwable t) {
-				LOG.error("Failed to start server.", t);
+				LOG.log(Level.SEVERE, "Failed to start server.", t);
 				throw new StartupErrorException("Failed to start server.", t);
 			}
 		});
