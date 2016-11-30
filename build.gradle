@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    baseName = 'gs-spring-boot'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations.all {
+    exclude module: "logback-classic"
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+springBoot {
+  mainClass = "com.henryclout.Application"
+}
+
+// Versions
+def log4j2Version = '2.1'
+def lombokVersion = '1.16.10'
+def junitVersion = '4.12'
+
+dependencies {
+	// Spring
+    compile ("org.springframework.boot:spring-boot-starter");
+    
+    // Logging
+	compile "org.apache.logging.log4j:log4j-api:$log4j2Version"
+	compile "org.apache.logging.log4j:log4j-core:$log4j2Version"
+	compile "org.apache.logging.log4j:log4j-slf4j-impl:$log4j2Version"
+  	
+    // Lombok
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    
+	// JUnit    
+    testCompile "junit:junit:$junitVersion"
+}
