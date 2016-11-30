@@ -1,7 +1,9 @@
 package com.henryclout.chat;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -40,11 +42,7 @@ public class ChatServerIT {
 
     @Test
     public void testMultipleConnect() throws Exception {
-    	// Connect 10 clients.
-    	List<Socket> clientSockets = new LinkedList<>();
-    	for (int i = 0; i < 10; i++) {
-    		clientSockets.add(new Socket("localhost", serverPort));
-    	}
+    	List<Socket> clientSockets = connectMultipleClients();
     	
     	// Close them all.
     	for (Socket clientSocket : clientSockets) {
@@ -52,6 +50,7 @@ public class ChatServerIT {
     	}
     }
 
+    @Test
     public void testMessageReceive() throws Exception {
         Socket clientOneSocket = new Socket("localhost", serverPort);
         PrintWriter clientOnePrintWriter = new PrintWriter(clientOneSocket.getOutputStream());
@@ -73,5 +72,66 @@ public class ChatServerIT {
         clientTwoScanner.close();
         clientOneSocket.close();
         clientTwoSocket.close();
+    }
+    
+//    @Test
+    public void testMultipleMessageReceive() throws Exception {
+    	List<TestClient> testClients = new LinkedList<>();
+    	for (Socket socket : connectMultipleClients()) {
+    		testClients.add(new TestClient(socket));
+    	}
+    	
+    	String message = "test message";
+    	for (TestClient testClientSender : testClients) {
+    		testClientSender.send(message);
+    		for (TestClient testClientReceiver : testClients) {
+    			if (testClientSender != testClientReceiver) {
+    				testClientReceiver.assertReceived(message);
+    			}
+    		}
+    	}
+    	
+    	// Close them all.
+    	for (TestClient testClient : testClients) {
+    		testClient.close();
+    	}
+    }
+    
+    private List<Socket> connectMultipleClients() throws UnknownHostException, IOException {
+    	List<Socket> clientSockets = new LinkedList<>();
+    	for (int i = 0; i < 10; i++) {
+    		clientSockets.add(new Socket("localhost", serverPort));
+    	}
+    	return clientSockets;
+    }
+    
+    private static class TestClient {
+    	private Socket socket;
+    	private PrintWriter printWriter;
+    	private Scanner scanner;
+    	
+    	TestClient(Socket socket) throws IOException {
+    		this.socket = socket;
+    		this.printWriter = new PrintWriter(socket.getOutputStream());
+    		this.scanner = new Scanner(socket.getInputStream());
+    	}
+    	
+    	public void assertReceived(String message) {
+            if (scanner.hasNext()) {
+                assertThat(message, equalTo(scanner.nextLine()));
+            } else {
+            	fail("Failed to receive message on second client.");
+            }
+		}
+
+		public void send(String message) {
+	        printWriter.println("Test message!");
+	        printWriter.flush();
+		}
+
+		public void close() throws IOException {
+    		socket.close();
+    	}
+    	
     }
 }
